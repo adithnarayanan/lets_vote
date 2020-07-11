@@ -1,16 +1,17 @@
 import 'package:hive/hive.dart';
 
-import 'election.dart';
+part 'ballot.g.dart';
 
+@HiveType(typeId: 2)
 class Ballot extends HiveObject {
-  //@HiveField(0)
+  @HiveField(0)
   String name;
 
-  //@HiveField(1)
+  @HiveField(1)
+  int googleBallotId;
+
+  @HiveField(2)
   DateTime date;
 
-  //@HiveField(2)
-  List<Election> elections;
-
-  Ballot(this.name, this.date, this.elections);
+  Ballot(this.name, this.googleBallotId, this.date);
 }

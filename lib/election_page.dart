@@ -2,20 +2,24 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lets_vote/candidate.dart';
 
+import 'ballot_page.dart';
 import 'candidate_page.dart';
 import 'election.dart';
 
 class ElectionPage extends StatefulWidget {
   Election election;
-  ElectionPage({Key key, this.election}) : super(key: key);
+  int electionIndex;
+  ElectionPage({Key key, this.election, this.electionIndex}) : super(key: key);
 
   @override
-  _ElectionPageState createState() => _ElectionPageState(election);
+  _ElectionPageState createState() =>
+      _ElectionPageState(election, electionIndex);
 }
 
 class _ElectionPageState extends State<ElectionPage> {
   Election election;
-  _ElectionPageState(this.election);
+  int electionIndex;
+  _ElectionPageState(this.election, this.electionIndex);
 
   _photoUrlExists(photoUrl) {
     if (photoUrl != null || photoUrl == '') {
@@ -27,6 +31,13 @@ class _ElectionPageState extends State<ElectionPage> {
       );
     }
     return AssetImage('assets/AmericanFlagStar.png');
+  }
+
+  _color(int index) {
+    if (index == election.chosenIndex) {
+      return Colors.green;
+    }
+    return Colors.amber.shade700;
   }
 
   _buildCandidateListView() {
@@ -42,7 +53,7 @@ class _ElectionPageState extends State<ElectionPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              color: Colors.amber.shade700,
+              color: _color(index),
               child: ListTile(
                 leading: CircleAvatar(
                   radius: 20.0,
@@ -60,7 +71,12 @@ class _ElectionPageState extends State<ElectionPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => CandidatePage(candidate: candidate)),
+                  builder: (context) => CandidatePage(
+                    candidate: candidate,
+                    electionIndex: electionIndex,
+                    candidateIndex: index,
+                  ),
+                ),
               );
             },
           ),
@@ -71,6 +87,74 @@ class _ElectionPageState extends State<ElectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: _buildCandidateListView()));
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              child: Container(
+                //height: 50,
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                width: double.maxFinite,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 241, 39, 17),
+                      Color.fromARGB(255, 245, 175, 25)
+                    ],
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 30),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                        child: Text(
+                          election.name,
+                          style: TextStyle(fontSize: 28, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Text(
+                        'Primary Election',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(20, 0, 0, 10),
+              child: Text(
+                'Candidates: ',
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+            Expanded(
+              child: _buildCandidateListView(),
+            ),
+            FlatButton(
+              child: Row(children: [
+                Icon(Icons.arrow_back_ios),
+                Text('Back to Ballot')
+              ]),
+              onPressed: () {
+                //go back to ballot page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BallotPage()),
+                );
+              },
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -300,7 +300,9 @@ class _VotingPageState extends State<VotingPage> {
       return renderInPersonorMailIn();
     } else if (render_input == 2) {
       return renderWebView();
-    } else if (render_input == 3) {}
+    } else if (render_input == 3) {
+      return renderMainPage();
+    }
   }
 
   @override

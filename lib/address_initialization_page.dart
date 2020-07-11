@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:lets_vote/animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
+import 'election.dart';
 
 const _kGoogleApiKey = 'AIzaSyAoMEzR-M4-xZ2DyRWi8eYa-xMPlQVpHf8';
 
@@ -195,6 +199,9 @@ class _AddressIntitializationPageState extends State<AddressIntitializationPage>
 
   @override
   void initState() {
+    Box<Election> electionsBox = Hive.box<Election>('electionBox');
+    electionsBox.clear();
+    DefaultCacheManager().emptyCache();
     super.initState();
     getPreferences();
     controller =

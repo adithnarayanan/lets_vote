@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:lets_vote/ballot.dart';
+import 'package:lets_vote/candidate.dart';
+import 'package:lets_vote/election.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lets_vote/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'initialization_page.dart';
 
-void main() {
+const electionBoxName = 'electionBox';
+const ballotBoxName = 'ballotBox';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter<Election>(ElectionAdapter());
+  Hive.registerAdapter<Candidate>(CandidateAdapter());
+  Hive.registerAdapter<Ballot>(BallotAdapter());
+  await Hive.openBox<Election>(electionBoxName);
+  await Hive.openBox<Ballot>(ballotBoxName);
   runApp(MyApp());
 }
 
@@ -84,5 +98,11 @@ class _MyAppState extends State<MyApp> {
       ),
       home: returnPage(setupCompleted),
     );
+  }
+
+  @override
+  void dispose() {
+    Hive.close();
+    super.dispose();
   }
 }

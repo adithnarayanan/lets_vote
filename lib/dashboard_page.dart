@@ -3,10 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'ballot.dart';
 
 const _newsApiKey = '90b7903befeb481ea444373cfbca02f1';
 
@@ -48,8 +52,30 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   List<NewsArticle> newsArticles = [];
-
+  Box<Ballot> ballotsBox;
+  String deviceId;
   String response;
+  String stateCode;
+
+  Future<String> getDeviceId() async {
+    String keyName = 'DeviceId';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String id = (prefs.getString(keyName));
+    //prefs.setElection('Election', new Election('hello', 12, 'Federal', new List<Candidate>() ));
+    //print(address);
+    print(id);
+    return id;
+  }
+
+  Future<String> getStateCode() async {
+    String keyName = 'stateCode';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String code = (prefs.getString(keyName));
+    //print(address);
+    print(code);
+    code = code.toLowerCase();
+    return code;
+  }
 
   getNews() async {
     String res;
@@ -115,9 +141,62 @@ class _DashboardPageState extends State<DashboardPage> {
     ));
   }
 
+  sendBallotRequest(String deviceId) async {
+    var res;
+    try {
+      String sendUrl =
+          'https://api.wevoteusa.org/apis/v1/electionsRetrieve/voter_device_id=' +
+              deviceId;
+
+      var file = await DefaultCacheManager().getSingleFile(sendUrl);
+      res = await file.readAsString();
+    } catch (error) {
+      print(error);
+    } finally {
+      populateBallots(res);
+    }
+  }
+
+  populateBallots(String ballotResponse) {
+    var jsonParsed = jsonDecode(ballotResponse);
+    int election_length = jsonParsed['election_list'].length;
+    for (var x = 0; x < election_length; x++) {
+      var ballot = jsonParsed[x];
+      if (ballot['election_is_upcoming']) {
+        if (ballot['state_code_list'].contains(stateCode)) {
+          DateTime ballotDate = DateTime.parse(ballot['election_day_text']);
+          Ballot addBallot = new Ballot(ballot['electionName'],
+              ballot['google_civic_election_id'], ballotDate);
+          ballotsBox.add(addBallot);
+        }
+      } else {
+        break;
+      }
+    }
+  }
+
+  void getPreferences() async {
+    String temp_id;
+    String temp_code;
+    try {
+      temp_id = await getDeviceId();
+      temp_code = await getStateCode();
+    } catch (error) {
+      print(error);
+    } finally {
+      deviceId = temp_id;
+      stateCode = temp_code;
+      sendBallotRequest(deviceId);
+    }
+  }
+
   @override
   void initState() {
     getNews();
+    ballotsBox = Hive.box<Ballot>('ballotBox');
+    if (ballotsBox.length < 1) {
+      getPreferences();
+    }
     super.initState();
   }
 
