@@ -1,7 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:lets_vote/candidate.dart';
+import 'package:lets_vote/dashboard_page.dart';
+import 'package:lets_vote/home.dart';
 
+import 'ballot.dart';
 import 'ballot_page.dart';
 import 'candidate_page.dart';
 import 'election.dart';
@@ -20,6 +24,9 @@ class _ElectionPageState extends State<ElectionPage> {
   Election election;
   int electionIndex;
   _ElectionPageState(this.election, this.electionIndex);
+
+  String ballotName;
+  bool isPrimary = false;
 
   _photoUrlExists(photoUrl) {
     if (photoUrl != null || photoUrl == '') {
@@ -86,6 +93,23 @@ class _ElectionPageState extends State<ElectionPage> {
   }
 
   @override
+  void initState() {
+    var ballotsBox = Hive.box<Ballot>('ballotBox');
+    for (var x = 0; x < ballotsBox.length; x++) {
+      print(ballotsBox.getAt(x).googleBallotId);
+      print(election.id);
+      if (ballotsBox.getAt(x).googleBallotId == election.googleCivicId) {
+        ballotName = ballotsBox.getAt(x).name;
+      }
+    }
+    //ballotName = ballotsBox.getAt(0).name;
+    if (ballotName.toLowerCase().contains('primary')) {
+      isPrimary = true;
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -120,7 +144,7 @@ class _ElectionPageState extends State<ElectionPage> {
                         ),
                       ),
                       Text(
-                        'Primary Election',
+                        ballotName,
                         style: TextStyle(fontSize: 16, color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
@@ -148,7 +172,10 @@ class _ElectionPageState extends State<ElectionPage> {
                 //go back to ballot page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => BallotPage()),
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(
+                            selectedIndex: 1,
+                          )),
                 );
               },
             )

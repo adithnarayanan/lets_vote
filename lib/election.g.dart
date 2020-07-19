@@ -19,25 +19,28 @@ class ElectionAdapter extends TypeAdapter<Election> {
     return Election(
       fields[0] as String,
       fields[1] as int,
-      fields[2] as String,
-      (fields[3] as List)?.cast<Candidate>(),
-      fields[4] as int,
+      fields[2] as int,
+      fields[3] as String,
+      (fields[4] as List)?.cast<Candidate>(),
+      fields[5] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Election obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.id)
       ..writeByte(2)
-      ..write(obj.officeLevel)
+      ..write(obj.googleCivicId)
       ..writeByte(3)
-      ..write(obj.candidates)
+      ..write(obj.officeLevel)
       ..writeByte(4)
+      ..write(obj.candidates)
+      ..writeByte(5)
       ..write(obj.chosenIndex);
   }
 }

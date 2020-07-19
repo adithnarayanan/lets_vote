@@ -13,5 +13,8 @@ class Ballot extends HiveObject {
   @HiveField(2)
   DateTime date;
 
-  Ballot(this.name, this.googleBallotId, this.date);
+  @HiveField(3)
+  DateTime deadline;
+
+  Ballot(this.name, this.googleBallotId, this.date, this.deadline);
 }

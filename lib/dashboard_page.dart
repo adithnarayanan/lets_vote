@@ -165,9 +165,9 @@ class _DashboardPageState extends State<DashboardPage> {
       if (ballot['election_is_upcoming']) {
         if (ballot['state_code_list'].contains(stateCode)) {
           DateTime ballotDate = DateTime.parse(ballot['election_day_text']);
-          Ballot addBallot = new Ballot(ballot['electionName'],
-              ballot['google_civic_election_id'], ballotDate);
-          ballotsBox.add(addBallot);
+          // Ballot addBallot = new Ballot(ballot['electionName'],
+          //     ballot['google_civic_election_id'], ballotDate);
+          // ballotsBox.add(addBallot);
         }
       } else {
         break;

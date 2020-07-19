@@ -13,17 +13,21 @@ class Election extends HiveObject {
   int id;
 
   @HiveField(2)
-  String officeLevel;
+  int googleCivicId;
 
   @HiveField(3)
-  List<Candidate> candidates;
+  String officeLevel;
 
   @HiveField(4)
+  List<Candidate> candidates;
+
+  @HiveField(5)
   int chosenIndex;
 
   Election(
     this.name,
     this.id,
+    this.googleCivicId,
     this.officeLevel,
     this.candidates,
     this.chosenIndex,

@@ -20,18 +20,21 @@ class BallotAdapter extends TypeAdapter<Ballot> {
       fields[0] as String,
       fields[1] as int,
       fields[2] as DateTime,
+      fields[3] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, Ballot obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.googleBallotId)
       ..writeByte(2)
-      ..write(obj.date);
+      ..write(obj.date)
+      ..writeByte(3)
+      ..write(obj.deadline);
   }
 }

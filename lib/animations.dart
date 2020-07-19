@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lets_vote/current_candidates_page.dart';
+import 'package:lets_vote/main.dart';
 import 'package:lets_vote/party_initialization_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'address_initialization_page.dart';
@@ -87,7 +88,10 @@ class NextHomeAnimation extends AnimatedWidget {
           ),
           onPressed: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage(selectedIndex: 2)),
+            );
           },
         ),
       ),

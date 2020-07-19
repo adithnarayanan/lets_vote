@@ -7,6 +7,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lets_vote/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'initialization_page.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 const electionBoxName = 'electionBox';
 const ballotBoxName = 'ballotBox';
@@ -77,7 +80,9 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     } else if (isSetupCompleted) {
-      return HomePage();
+      return HomePage(
+        selectedIndex: 2,
+      );
     }
     return InitializationPage();
   }

@@ -5,9 +5,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:lets_vote/animations.dart';
+import 'package:lets_vote/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
+import 'ballot.dart';
 import 'election.dart';
 
 const _kGoogleApiKey = 'AIzaSyAoMEzR-M4-xZ2DyRWi8eYa-xMPlQVpHf8';
@@ -88,6 +90,7 @@ class _AddressIntitializationPageState extends State<AddressIntitializationPage>
     bool status;
     String stateCode;
     String formattedAddress = addressInput.replaceAll(new RegExp(' '), '%20');
+    String addressNew;
 
     String url =
         'https://www.googleapis.com/civicinfo/v2/representatives?key=' +
@@ -113,6 +116,14 @@ class _AddressIntitializationPageState extends State<AddressIntitializationPage>
         status = true;
         var body = jsonDecode(response.body);
         stateCode = body['normalizedInput']['state'];
+        //print(stateCode);
+        //print(body['normalizedInput']['line1']);
+        addressNew = body['normalizedInput']['line1'] +
+            ' ' +
+            body['normalizedInput']['city'] +
+            ', ' +
+            body['normalizedInput']['state'];
+        print(addressNew);
       } else {
         status = false;
       }
@@ -125,9 +136,9 @@ class _AddressIntitializationPageState extends State<AddressIntitializationPage>
           moveToNextPage = status;
         }
         if (status) {
-          address = addressInput;
+          address = addressNew;
           whichAddress = 1;
-          setAddress(address);
+          setAddress(addressNew);
           print(stateCode);
           setStateCode(stateCode);
         }
@@ -200,8 +211,11 @@ class _AddressIntitializationPageState extends State<AddressIntitializationPage>
   @override
   void initState() {
     Box<Election> electionsBox = Hive.box<Election>('electionBox');
+    Box<Ballot> ballotsBox = Hive.box<Ballot>('ballotBox');
+    ballotsBox.clear();
     electionsBox.clear();
     DefaultCacheManager().emptyCache();
+    //BallotCacheManager().getFilePath()
     super.initState();
     getPreferences();
     controller =

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -11,19 +12,20 @@ import 'package:path/path.dart' as path;
 
 const _kGoogleApiKey = 'AIzaSyAoMEzR-M4-xZ2DyRWi8eYa-xMPlQVpHf8';
 
-class CandidatesCacheManager extends BaseCacheManager {
+class RepresentativesCacheManager extends BaseCacheManager {
   static const key = 'customCache';
 
-  static CandidatesCacheManager _instance;
+  static RepresentativesCacheManager _instance;
 
-  factory CandidatesCacheManager() {
+  factory RepresentativesCacheManager() {
     if (_instance == null) {
-      _instance = new CandidatesCacheManager();
+      _instance = new RepresentativesCacheManager();
     }
     return _instance;
   }
 
-  CandidatesCacheManager._() : super(key, maxAgeCacheObject: Duration(days: 7));
+  RepresentativesCacheManager._()
+      : super(key, maxAgeCacheObject: Duration(days: 7));
 
   @override
   Future<String> getFilePath() async {
@@ -32,13 +34,13 @@ class CandidatesCacheManager extends BaseCacheManager {
   }
 }
 
-class Candidate {
+class Representative {
   String name;
   String officeName;
   String photoUrl;
   String party;
 
-  Candidate(this.name, this.officeName, this.photoUrl, this.party);
+  Representative(this.name, this.officeName, this.photoUrl, this.party);
 }
 
 class CurrentCandidatesPage extends StatefulWidget {
@@ -50,7 +52,7 @@ class CurrentCandidatesPage extends StatefulWidget {
 //TODO use ListView.builder
 //TODO cache manager default - 7 days
 class _CurrentCandidatesPageState extends State<CurrentCandidatesPage> {
-  List<Candidate> candidates = [];
+  List<Representative> representatives = [];
   String response;
   String address;
 
@@ -72,7 +74,7 @@ class _CurrentCandidatesPageState extends State<CurrentCandidatesPage> {
             formatted_address;
     //address;
     print(url + 'url');
-    var file = await CandidatesCacheManager._().getSingleFile(url);
+    var file = await RepresentativesCacheManager._().getSingleFile(url);
     //print(response.body);
     var res = file.readAsString();
     return res;
@@ -80,7 +82,7 @@ class _CurrentCandidatesPageState extends State<CurrentCandidatesPage> {
 
   _photoUrlExists(photoUrl) {
     if (photoUrl != null) {
-      return NetworkImage(photoUrl);
+      return CachedNetworkImageProvider(photoUrl);
     }
     return AssetImage('assets/AmericanFlagStar.png');
   }
@@ -114,7 +116,8 @@ class _CurrentCandidatesPageState extends State<CurrentCandidatesPage> {
           String photoUrl = officialsBody[index]['photoUrl'];
           //print(officeName + ': ' + name + ' ' + ' ' + party + ' ');
 
-          candidates.add(new Candidate(name, officeName, photoUrl, party));
+          representatives
+              .add(new Representative(name, officeName, photoUrl, party));
           // representativeCards.add(
           //   Card(
           //     child: ListTile(
@@ -132,9 +135,9 @@ class _CurrentCandidatesPageState extends State<CurrentCandidatesPage> {
 
       return new ListView.builder(
         shrinkWrap: true,
-        itemCount: candidates.length,
+        itemCount: representatives.length,
         itemBuilder: (BuildContext context, int index) {
-          Candidate candidate = candidates[index];
+          Representative representative = representatives[index];
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Card(
@@ -145,13 +148,14 @@ class _CurrentCandidatesPageState extends State<CurrentCandidatesPage> {
               child: ListTile(
                 leading: CircleAvatar(
                   radius: 20.0,
-                  backgroundImage: _photoUrlExists(candidate.photoUrl),
+                  backgroundImage: _photoUrlExists(representative.photoUrl),
                 ),
                 title: Text(
-                  candidate.name,
+                  representative.name,
                   //style: TextStyle(color: Colors.grey),
                 ),
-                subtitle: Text('${candidate.officeName} - ${candidate.party}'),
+                subtitle: Text(
+                    '${representative.officeName} - ${representative.party}'),
               ),
             ),
           );

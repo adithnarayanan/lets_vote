@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'candidate.dart';
 import 'election.dart';
 import 'election_page.dart';
+import 'home.dart';
 
 // class Election {
 //   String name;
@@ -53,6 +54,7 @@ class _BallotPageState extends State<BallotPage> {
   List<int> local = [];
   bool electionsReady = false;
   String deviceId;
+  String ballotName;
   Box<Election> electionsBox;
   Box<Ballot> ballotsBox;
 
@@ -130,6 +132,7 @@ class _BallotPageState extends State<BallotPage> {
         Election addElection = new Election(
             election['ballot_item_display_name'],
             election['id'],
+            election['google_civic_election_id'],
             election['race_office_level'],
             electionCandidates,
             null);
@@ -139,11 +142,11 @@ class _BallotPageState extends State<BallotPage> {
         //  returnElections.add(addElection);
       }
 
-      DateTime parsedDateTime = DateTime.parse(jsonParsed['election_day_text']);
+      // DateTime parsedDateTime = DateTime.parse(jsonParsed['election_day_text']);
 
-      Ballot addBallot = new Ballot(jsonParsed['election_name'],
-          int.parse(jsonParsed['google_civic_election_id']), parsedDateTime);
-      ballotsBox.add(addBallot);
+      // Ballot addBallot = new Ballot(jsonParsed['election_name'],
+      //     int.parse(jsonParsed['google_civic_election_id']), parsedDateTime, parsedDateTime);
+      // ballotsBox.add(addBallot);
       setState(() {
         filterElections();
         electionsReady = true;
@@ -174,6 +177,9 @@ class _BallotPageState extends State<BallotPage> {
       }
       if (fslIndex == 3) {
         chosenIndicies = local;
+      }
+      if (chosenIndicies.length == 0) {
+        return Center(child: Text('Oops! No Races to Display'));
       }
       return new ListView.builder(
         shrinkWrap: true,
@@ -262,19 +268,62 @@ class _BallotPageState extends State<BallotPage> {
   void initState() {
     //getPreferences();
     electionsBox = Hive.box<Election>('electionBox');
+    print(electionsBox.length);
     ballotsBox = Hive.box<Ballot>('ballotBox');
-    if (electionsBox.length == 0) {
-      getPreferences();
-    } else {
-      filterElections();
-      electionsReady = true;
+    // if (electionsBox.length == 0) {
+    //   getPreferences();
+    // } else {
+    for (var x = 0; x < ballotsBox.length; x++) {
+      print(ballotsBox.getAt(x).googleBallotId);
+      print(electionsBox.getAt(0).googleCivicId);
+      if (ballotsBox.getAt(x).googleBallotId ==
+          electionsBox.getAt(0).googleCivicId) {
+        ballotName = ballotsBox.getAt(x).name;
+      }
     }
+    filterElections();
+    electionsReady = true;
+    //}
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.autorenew),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: Text('Refresh Ballot?'),
+                content: Text(
+                    'Refreshing your ballot will reflect any changes in elections (i.e. candidates dropping out).\n Let\'s Vote will keep your selected preferences, unless the candidate you have previously chosen has dropped out.\n Let\'s Vote automatically refreshes your ballots every 3 days'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Yes"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      DefaultCacheManager().emptyCache();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HomePage(selectedIndex: 1)),
+                      );
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("No"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+              barrierDismissible: true,
+            );
+          }),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -312,7 +361,7 @@ class _BallotPageState extends State<BallotPage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Text(
-                    'Primary Election',
+                    ballotName,
                     style: TextStyle(fontSize: 16, color: Colors.white),
                     textAlign: TextAlign.center,
                   ),

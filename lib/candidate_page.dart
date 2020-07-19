@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:lets_vote/election.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'candidate.dart';
 import 'election_page.dart';
@@ -26,10 +28,11 @@ class _CandidatePageState extends State<CandidatePage> {
 
   Box<Election> electionsBox;
   Election election;
+  String party;
 
   _photoUrlExists(photoUrl) {
     if (photoUrl != null) {
-      return NetworkImage(photoUrl);
+      return CachedNetworkImageProvider(photoUrl);
     }
     return AssetImage('assets/AmericanFlagStar.png');
   }
@@ -43,9 +46,11 @@ class _CandidatePageState extends State<CandidatePage> {
 
   _trailingButton() {
     if (candidateIndex == election.chosenIndex) {
-      return FlatButton(
-        child: Icon(Icons.remove_circle_outline),
-        onPressed: () {
+      return InkWell(
+        child: Padding(
+            padding: EdgeInsets.all(5),
+            child: Icon(Icons.remove_circle_outline)),
+        onTap: () {
           setState(() {
             election.chosenIndex = null;
             election.save();
@@ -53,9 +58,10 @@ class _CandidatePageState extends State<CandidatePage> {
         },
       );
     }
-    return FlatButton(
-      child: Icon(Icons.add_circle_outline),
-      onPressed: () {
+    return InkWell(
+      child: Padding(
+          padding: EdgeInsets.all(5), child: Icon(Icons.add_circle_outline)),
+      onTap: () {
         setState(() {
           election.chosenIndex = candidateIndex;
           election.save();
@@ -69,6 +75,14 @@ class _CandidatePageState extends State<CandidatePage> {
       return Colors.green;
     }
     return Colors.amber.shade700;
+  }
+
+  Future<String> getParty() async {
+    String keyName = 'partyAffiliation';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String party = (prefs.getString(keyName));
+    //print(address);
+    party = party;
   }
 
   @override
