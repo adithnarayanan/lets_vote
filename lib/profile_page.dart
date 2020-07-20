@@ -130,20 +130,18 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
-            child: Card(
-              child: ListTile(
-                leading: Icon(Icons.bookmark),
-                title: Text('Favorite Candidates'),
-                trailing: Icon(Icons.arrow_forward_ios),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
+          //   child: Card(
+          //     child: ListTile(
+          //       leading: Icon(Icons.bookmark),
+          //       title: Text('Favorite Candidates'),
+          //       trailing: Icon(Icons.arrow_forward_ios),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
   }
 }
-
-class PartyIntitializationPage {}

@@ -1,4 +1,4 @@
-# lets_vote
+# Lets Vote
 
 A new Flutter project.
 

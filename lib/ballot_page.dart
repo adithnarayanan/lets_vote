@@ -179,7 +179,7 @@ class _BallotPageState extends State<BallotPage> {
         chosenIndicies = local;
       }
       if (chosenIndicies.length == 0) {
-        return Center(child: Text('Oops! No Races to Display'));
+        return Center(child: Text('Oops! No Races to Display Here'));
       }
       return new ListView.builder(
         shrinkWrap: true,
@@ -330,11 +330,25 @@ class _BallotPageState extends State<BallotPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15),
+              padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
               child: Text(
                 'Your Ballot',
-                style: TextStyle(fontSize: 50),
+                style: TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(80, 0, 80, 20),
+              child: SizedBox(
+                height: 20.0,
+                width: 150.0,
+                child: Divider(
+                  thickness: 3,
+                  color: Colors.teal.shade100,
+                ),
               ),
             ),
             Padding(

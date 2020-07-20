@@ -147,7 +147,13 @@ class _DashboardPageState extends State<DashboardPage> {
 
     setState(() {
       status = true;
-      firstDate = dates[0];
+      if (dates.length > 1) {
+        firstDate = dates[1];
+        index = 1;
+      } else {
+        firstDate = dates[0];
+      }
+
       // _controller.setSelectedDay(dates[index]);
     });
   }
@@ -162,6 +168,20 @@ class _DashboardPageState extends State<DashboardPage> {
     populateDates();
     //}
     super.initState();
+  }
+
+  _colorLeftArrow() {
+    if (index > 0) {
+      return Colors.white;
+    }
+    return Colors.grey;
+  }
+
+  _colorRightArrow() {
+    if (index < (dates.length - 1)) {
+      return Colors.white;
+    }
+    return Colors.grey;
   }
 
   @override
@@ -197,13 +217,15 @@ class _DashboardPageState extends State<DashboardPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: EdgeInsets.fromLTRB(20, 10, 0, 0),
+                        padding: EdgeInsets.fromLTRB(15, 20, 0, 0),
                         child: Text(
-                          'Upcoming',
+                          'Upcoming:',
                           style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 40.0,
-                              fontWeight: FontWeight.bold),
+                            letterSpacing: 1.0,
+                            color: Colors.white,
+                            fontSize: 40.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       TableCalendar(
@@ -250,115 +272,115 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 0.0),
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromARGB(255, 0, 242, 96),
-                        Color.fromARGB(255, 5, 117, 230)
-                      ],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
-                      )
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                width: double.maxFinite,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 0, 242, 96),
+                      Color.fromARGB(255, 5, 117, 230)
                     ],
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Expanded(
-                          child: InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Icon(
-                                Icons.chevron_left,
-                                color: Colors.white,
-                              ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    )
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 0.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 30.0, horizontal: 10.0),
+                            child: Icon(
+                              Icons.arrow_back_ios,
+                              color: _colorLeftArrow(),
                             ),
-                            onTap: () {
-                              setState(() {
-                                if (index > 0) {
-                                  index--;
-                                  _controller.setSelectedDay(dates[index]);
-                                  _controller.setFocusedDay(dates[index]);
-                                  print('tapped');
-                                }
-                                // _controller
-                                //     .setSelectedDay(ballotsBox.getAt(0).date);
-                                // _controller.setFocusedDay(ballotsBox.getAt(0).date);
-                                // print('tapped');
-                                // print(ballotsBox.getAt(0).date);
-                              });
-                            },
                           ),
-                        ),
-                        Expanded(
-                          flex: 5,
-                          child: Column(
-                            children: [
-                              Text(
-                                datesMap[dates[index]],
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(
-                                height: 10.0,
-                              ),
-                              Text(
-                                DateFormat.yMMMMd().format(dates[index]),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16.0,
-                                  //fontWeight: FontWeight.bold
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Icon(
-                                Icons.chevron_right,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onTap: () {
-                              if (index < (dates.length - 1)) {
-                                setState(() {
-                                  index++;
-                                  _controller.setSelectedDay(dates[index]);
-                                  _controller.setFocusedDay(dates[index]);
-                                });
+                          onTap: () {
+                            setState(() {
+                              if (index > 0) {
+                                index--;
+                                _controller.setSelectedDay(dates[index]);
+                                _controller.setFocusedDay(dates[index]);
+                                print('tapped');
                               }
-                              // setState(() {
-                              //   _controller
-                              //       .setSelectedDay(ballotsBox.getAt(0).deadline);
-                              //   _controller
-                              //       .setFocusedDay(ballotsBox.getAt(0).deadline);
-                              //   print(ballotsBox.getAt(0).deadline);
-                              // });
-                            },
+                              // _controller
+                              //     .setSelectedDay(ballotsBox.getAt(0).date);
+                              // _controller.setFocusedDay(ballotsBox.getAt(0).date);
+                              // print('tapped');
+                              // print(ballotsBox.getAt(0).date);
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: Column(
+                          children: [
+                            Text(
+                              datesMap[dates[index]],
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            Text(
+                              DateFormat.yMMMMd().format(dates[index]),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                //fontWeight: FontWeight.bold
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 30.0, horizontal: 10.0),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: _colorRightArrow(),
+                            ),
                           ),
-                        )
-                      ],
-                    ),
+                          onTap: () {
+                            if (index < (dates.length - 1)) {
+                              setState(() {
+                                index++;
+                                _controller.setSelectedDay(dates[index]);
+                                _controller.setFocusedDay(dates[index]);
+                              });
+                            }
+                            // setState(() {
+                            //   _controller
+                            //       .setSelectedDay(ballotsBox.getAt(0).deadline);
+                            //   _controller
+                            //       .setFocusedDay(ballotsBox.getAt(0).deadline);
+                            //   print(ballotsBox.getAt(0).deadline);
+                            // });
+                          },
+                        ),
+                      )
+                    ],
                   ),
                 ),
               )

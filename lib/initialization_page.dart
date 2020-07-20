@@ -85,7 +85,7 @@ class _InitializationPageState extends State<InitializationPage>
     );
 
     const TextStyle smallText = TextStyle(
-      fontSize: 23,
+      fontSize: 20,
     );
 
     TextStyle buttonText = TextStyle(
@@ -118,7 +118,7 @@ class _InitializationPageState extends State<InitializationPage>
             Padding(
               padding: const EdgeInsets.fromLTRB(25, 10, 16, 10),
               child: Text(
-                'Begin with two simple steps',
+                'Begin Voting in Two Simple Steps',
                 style: smallText,
               ),
             ),

@@ -72,9 +72,18 @@ class _MyAppState extends State<MyApp> {
       return Scaffold(
         body: SafeArea(
           child: Center(
-            child: Text(
-              'Let\s Vote',
-              style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                  // child: Text(
+                  //   'Let\s Vote',
+                  //   style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                  // ),
+                  children: [
+                    Expanded(
+                      child: Image.asset('assets/LetsVoteBeta.png'),
+                    )
+                  ]),
             ),
           ),
         ),
@@ -96,6 +105,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Let\'s Vote',
       theme: ThemeData(
         visualDensity: VisualDensity.adaptivePlatformDensity,
