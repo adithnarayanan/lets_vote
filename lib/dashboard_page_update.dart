@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'ballot_cache_manager.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -60,6 +62,7 @@ class _DashboardPageState extends State<DashboardPage> {
               deviceId;
 
       var file = await DefaultCacheManager().getSingleFile(sendUrl);
+      //var file = await BallotCacheManager().getSingleFile(sendUrl);
       res = await file.readAsString();
     } catch (error) {
       print(error);

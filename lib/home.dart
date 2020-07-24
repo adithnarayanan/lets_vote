@@ -17,28 +17,29 @@ import 'current_candidates_page.dart';
 import 'election.dart';
 import 'candidate.dart';
 import 'dart:convert';
+import 'ballot_cache_manager.dart';
 
-class BallotCacheManager extends BaseCacheManager {
-  static const key = 'ballot Cache';
+// class BallotCacheManager extends BaseCacheManager {
+//   static const key = 'ballot Cache';
 
-  static BallotCacheManager _instance;
+//   static BallotCacheManager _instance;
 
-  factory BallotCacheManager() {
-    if (_instance == null) {
-      _instance = new BallotCacheManager();
-    }
-    return _instance;
-  }
+//   factory BallotCacheManager() {
+//     if (_instance == null) {
+//       _instance = new BallotCacheManager();
+//     }
+//     return _instance;
+//   }
 
-  BallotCacheManager._() : super(key, maxAgeCacheObject: Duration(days: 3));
+//   BallotCacheManager._() : super(key, maxAgeCacheObject: Duration(days: 3));
 
-  @override
-  Future<String> getFilePath() async {
-    var directory = await getTemporaryDirectory();
-    return directory.path;
-    //return path.join(directory.path, key);
-  }
-}
+//   @override
+//   Future<String> getFilePath() async {
+//     var directory = await getTemporaryDirectory();
+//     return directory.path;
+//     //return path.join(directory.path, key);
+//   }
+// }
 
 class HomePage extends StatefulWidget {
   int selectedIndex;
@@ -265,8 +266,8 @@ class _HomePageState extends State<HomePage> {
     String sendUrl =
         'https://api.wevoteusa.org/apis/v1/voterBallotItemsRetrieve/?&voter_device_id=' +
             id;
-    //var file = await BallotCacheManager._().getFileFromCache(sendUrl);
-    var file = await DefaultCacheManager().getFileFromCache(sendUrl);
+    var file = await BallotCacheManager().getFileFromCache(sendUrl);
+    //var file = await DefaultCacheManager().getFileFromCache(sendUrl);
     print(file);
     print(status);
     if (file == null || status == true) {
@@ -286,8 +287,8 @@ class _HomePageState extends State<HomePage> {
       String sendUrl =
           'https://api.wevoteusa.org/apis/v1/voterBallotItemsRetrieve/?&voter_device_id=' +
               id;
-      //var file = await BallotCacheManager._().getSingleFile(sendUrl);
-      var file = await DefaultCacheManager().getSingleFile(sendUrl);
+      var file = await BallotCacheManager().getSingleFile(sendUrl);
+      // var file = await DefaultCacheManager().getSingleFile(sendUrl);
       response = await file.readAsString();
     } catch (error) {
       print(error);
@@ -353,7 +354,8 @@ class _HomePageState extends State<HomePage> {
           'https://api.wevoteusa.org/apis/v1/electionsRetrieve/voter_device_id=' +
               deviceId;
 
-      var file = await DefaultCacheManager().getSingleFile(sendUrl);
+      //var file = await DefaultCacheManager().getSingleFile(sendUrl);
+      var file = await BallotCacheManager().getSingleFile(sendUrl);
       res = await file.readAsString();
     } catch (error) {
       print(error);

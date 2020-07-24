@@ -6,10 +6,12 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:lets_vote/animations.dart';
 import 'package:lets_vote/home.dart';
+import 'package:lets_vote/measure.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import 'ballot.dart';
+import 'ballot_cache_manager.dart';
 import 'election.dart';
 
 const _kGoogleApiKey = 'AIzaSyAoMEzR-M4-xZ2DyRWi8eYa-xMPlQVpHf8';
@@ -212,10 +214,12 @@ class _AddressIntitializationPageState extends State<AddressIntitializationPage>
   void initState() {
     Box<Election> electionsBox = Hive.box<Election>('electionBox');
     Box<Ballot> ballotsBox = Hive.box<Ballot>('ballotBox');
+    Box<Measure> measuresBox = Hive.box<Measure>('measureBox');
     ballotsBox.clear();
     electionsBox.clear();
-    DefaultCacheManager().emptyCache();
-    //BallotCacheManager().getFilePath()
+    measuresBox.clear();
+    // DefaultCacheManager().emptyCache();
+    BallotCacheManager().emptyCache();
     super.initState();
     getPreferences();
     controller =

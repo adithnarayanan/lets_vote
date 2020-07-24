@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hive/hive.dart';
 import 'package:lets_vote/ballot.dart';
+import 'package:lets_vote/ballot_cache_manager.dart';
 import 'package:lets_vote/measure.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -24,26 +25,26 @@ import 'measure_page.dart';
 //   Election(this.name, this.id, this.officeLevel, this.candidates);
 // }
 
-class BallotCacheManager extends BaseCacheManager {
-  static const key = 'customCache';
+// class BallotCacheManager extends BaseCacheManager {
+//   static const key = 'customCache';
 
-  static BallotCacheManager _instance;
+//   static BallotCacheManager _instance;
 
-  factory BallotCacheManager() {
-    if (_instance == null) {
-      _instance = new BallotCacheManager();
-    }
-    return _instance;
-  }
+//   factory BallotCacheManager() {
+//     if (_instance == null) {
+//       _instance = new BallotCacheManager();
+//     }
+//     return _instance;
+//   }
 
-  BallotCacheManager._() : super(key, maxAgeCacheObject: Duration(days: 7));
+//   BallotCacheManager._() : super(key, maxAgeCacheObject: Duration(days: 7));
 
-  @override
-  Future<String> getFilePath() async {
-    var directory = await getTemporaryDirectory();
-    return path.join(directory.path, key);
-  }
-}
+//   @override
+//   Future<String> getFilePath() async {
+//     var directory = await getTemporaryDirectory();
+//     return path.join(directory.path, key);
+//   }
+// }
 
 class BallotPage extends StatefulWidget {
   @override
@@ -376,7 +377,8 @@ class _BallotPageState extends State<BallotPage> {
                     child: Text("Yes"),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      DefaultCacheManager().emptyCache();
+                      //DefaultCacheManager().emptyCache();
+                      BallotCacheManager().emptyCache();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
