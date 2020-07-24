@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hive/hive.dart';
 import 'package:lets_vote/ballot.dart';
+import 'package:lets_vote/measure.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ import 'candidate.dart';
 import 'election.dart';
 import 'election_page.dart';
 import 'home.dart';
+import 'measure_page.dart';
 
 // class Election {
 //   String name;
@@ -57,6 +59,7 @@ class _BallotPageState extends State<BallotPage> {
   String ballotName;
   Box<Election> electionsBox;
   Box<Ballot> ballotsBox;
+  Box<Measure> measuresBox;
 
   Future<void> sendBallotRequest(String voterId) async {
     var response;
@@ -163,6 +166,70 @@ class _BallotPageState extends State<BallotPage> {
     return Colors.amber.shade600;
   }
 
+  _measureColor(Measure measure) {
+    if (measure.isYes != null) {
+      return Colors.green;
+    }
+    return Colors.amber.shade600;
+  }
+
+  _buildMeasuresView(bool status) {
+    if (status) {
+      if (measuresBox.length == 0) {
+        return Center(child: Text('Oops! No Measures to Display Here'));
+      }
+      return new ListView.builder(
+        shrinkWrap: true,
+        itemCount: measuresBox.length,
+        itemBuilder: (BuildContext context, int index) {
+          Measure measure = measuresBox.getAt(index);
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: FlatButton(
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                color: _measureColor(measure),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: ListTile(
+                    // leading: CircleAvatar(
+                    //   radius: 20.0,
+                    //   backgroundImage: _photoUrlExists(candidate.photoUrl),
+                    // ),
+                    title: Text(
+                      measure.name,
+                      //style: TextStyle(color: Colors.grey),
+                    ),
+                    //subtitle: Text('{$election.officeLevel} Office'),
+                    trailing: Icon(Icons.arrow_forward_ios),
+                  ),
+                ),
+              ),
+              onPressed: () {
+                //open Election Page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MeasurePage(
+                      measure: measure,
+                      ballotName: ballotName,
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      );
+    }
+    return Center(
+        child: CircularProgressIndicator(
+      strokeWidth: 5,
+    ));
+  }
+
   _buildElectionsView(bool status, int fslIndex) {
     if (status) {
       // return Center(
@@ -194,17 +261,20 @@ class _BallotPageState extends State<BallotPage> {
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 color: _electionColor(election),
-                child: ListTile(
-                  // leading: CircleAvatar(
-                  //   radius: 20.0,
-                  //   backgroundImage: _photoUrlExists(candidate.photoUrl),
-                  // ),
-                  title: Text(
-                    election.name,
-                    //style: TextStyle(color: Colors.grey),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: ListTile(
+                    // leading: CircleAvatar(
+                    //   radius: 20.0,
+                    //   backgroundImage: _photoUrlExists(candidate.photoUrl),
+                    // ),
+                    title: Text(
+                      election.name,
+                      //style: TextStyle(color: Colors.grey),
+                    ),
+                    //subtitle: Text('{$election.officeLevel} Office'),
+                    trailing: Icon(Icons.arrow_forward_ios),
                   ),
-                  //subtitle: Text('{$election.officeLevel} Office'),
-                  trailing: Icon(Icons.arrow_forward_ios),
                 ),
               ),
               onPressed: () {
@@ -268,6 +338,7 @@ class _BallotPageState extends State<BallotPage> {
   void initState() {
     //getPreferences();
     electionsBox = Hive.box<Election>('electionBox');
+    measuresBox = Hive.box<Measure>('measureBox');
     print(electionsBox.length);
     ballotsBox = Hive.box<Ballot>('ballotBox');
     // if (electionsBox.length == 0) {
@@ -330,7 +401,7 @@ class _BallotPageState extends State<BallotPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
               child: Text(
                 'Your Ballot',
                 style: TextStyle(
@@ -384,7 +455,7 @@ class _BallotPageState extends State<BallotPage> {
             ),
             Expanded(
               child: DefaultTabController(
-                length: 3,
+                length: 4,
                 child: Column(
                   children: [
                     TabBar(
@@ -396,7 +467,10 @@ class _BallotPageState extends State<BallotPage> {
                           text: 'State',
                         ),
                         Tab(
-                          text: 'Municipal',
+                          text: 'Local',
+                        ),
+                        Tab(
+                          text: 'Measures',
                         )
                       ],
                       labelColor: Colors.black,
@@ -407,6 +481,7 @@ class _BallotPageState extends State<BallotPage> {
                           _buildElectionsView(electionsReady, 1),
                           _buildElectionsView(electionsReady, 2),
                           _buildElectionsView(electionsReady, 3),
+                          _buildMeasuresView(electionsReady),
                         ],
                       ),
                     )

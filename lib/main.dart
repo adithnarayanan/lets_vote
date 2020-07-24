@@ -5,6 +5,7 @@ import 'package:lets_vote/candidate.dart';
 import 'package:lets_vote/election.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lets_vote/home.dart';
+import 'package:lets_vote/measure.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'initialization_page.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -13,14 +14,17 @@ import 'package:path/path.dart' as path;
 
 const electionBoxName = 'electionBox';
 const ballotBoxName = 'ballotBox';
+const measureBoxName = 'measureBox';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter<Election>(ElectionAdapter());
   Hive.registerAdapter<Candidate>(CandidateAdapter());
+  Hive.registerAdapter<Measure>(MeasureAdapter());
   Hive.registerAdapter<Ballot>(BallotAdapter());
   await Hive.openBox<Election>(electionBoxName);
   await Hive.openBox<Ballot>(ballotBoxName);
+  await Hive.openBox<Measure>(measureBoxName);
   runApp(MyApp());
 }
 

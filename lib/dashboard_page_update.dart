@@ -186,11 +186,35 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    const TextStyle topStyle = TextStyle(
+      fontSize: 35,
+      fontWeight: FontWeight.bold,
+    );
+
     if (status) {
       return Scaffold(
         body: SafeArea(
           child: Column(
             children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
+                child: Text(
+                  'Upcoming',
+                  style: topStyle,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 80),
+                child: SizedBox(
+                  height: 20.0,
+                  width: 150.0,
+                  child: Divider(
+                    thickness: 3,
+                    color: Colors.teal.shade100,
+                  ),
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: Container(
@@ -216,18 +240,18 @@ class _DashboardPageState extends State<DashboardPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(15, 20, 0, 0),
-                        child: Text(
-                          'Upcoming:',
-                          style: TextStyle(
-                            letterSpacing: 1.0,
-                            color: Colors.white,
-                            fontSize: 40.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.fromLTRB(15, 20, 0, 0),
+                      //   child: Text(
+                      //     'Upcoming:',
+                      //     style: TextStyle(
+                      //       letterSpacing: 1.0,
+                      //       color: Colors.white,
+                      //       fontSize: 40.0,
+                      //       fontWeight: FontWeight.bold,
+                      //     ),
+                      //   ),
+                      // ),
                       TableCalendar(
                         initialSelectedDay: firstDate,
                         calendarStyle: CalendarStyle(
@@ -293,7 +317,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ],
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 0.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [

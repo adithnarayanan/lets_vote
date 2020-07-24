@@ -94,39 +94,57 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.group),
-              title: Text('Party: $party'),
-              //trailing: Icon(Icons.arrow_forward_ios),
-              trailing: FlatButton(
-                child: Text('Edit',
-                    style: TextStyle(fontSize: 15, color: Colors.blue)),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PartyInitializationPage()),
-                  );
-                },
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6.0),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: ListTile(
+                  leading: Icon(Icons.group),
+                  title: Text(
+                    'Party: $party',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                  //trailing: Icon(Icons.arrow_forward_ios),
+                  trailing: FlatButton(
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 15, color: Colors.blue)),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PartyInitializationPage()),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ),
-          Card(
-            child: ListTile(
-              leading: Icon(Icons.location_on),
-              title: Text('Address: $address'),
-              //trailing: Icon(Icons.arrow_forward_ios),
-              trailing: FlatButton(
-                child: Text('Edit',
-                    style: TextStyle(fontSize: 15, color: Colors.blue)),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => AddressIntitializationPage()),
-                  );
-                },
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6.0),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: ListTile(
+                  leading: Icon(Icons.location_on),
+                  title: Text(
+                    'Address: $address',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                  //trailing: Icon(Icons.arrow_forward_ios),
+                  trailing: FlatButton(
+                    child: Text('Edit',
+                        style: TextStyle(fontSize: 15, color: Colors.blue)),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddressIntitializationPage()),
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ),

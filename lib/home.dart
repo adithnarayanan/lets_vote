@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:lets_vote/ballot_page.dart';
+import 'package:lets_vote/measure.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:lets_vote/dashboard_page.dart';
 import 'ballot.dart';
@@ -53,6 +54,7 @@ class _HomePageState extends State<HomePage> {
 
   Box<Ballot> ballotsBox;
   Box<Election> electionsBox;
+  Box<Measure> measuresBox;
   String stateCode;
   String id;
   String responseFromStateDeadlines;
@@ -73,7 +75,8 @@ class _HomePageState extends State<HomePage> {
     return false;
   }
 
-  void organizeElections(String response, Map<int, String> electionIndicies) {
+  void organizeElections(String response, Map<int, String> electionIndicies,
+      Map<int, bool> measureIndicies) {
     print('organizing elections');
     var jsonParsed = jsonDecode(response);
 
@@ -84,77 +87,99 @@ class _HomePageState extends State<HomePage> {
 
       for (var x = 0; x < ballotItemLength; x++) {
         var election = jsonParsed['ballot_item_list'][x];
-        int candidateListLength = election['candidate_list'].length;
-        if (candidateListLength > 20) {
-          candidateListLength = 20;
-        }
-        List<Candidate> electionCandidates = [];
-
-        List<int> nonRepeatIndexes = [];
-        List<String> stringNames = [];
-
-        for (var y = 0; y < candidateListLength; y++) {
-          var candidate = election['candidate_list'][y];
-          var candidateName = candidate['ballot_item_display_name'];
-
-          if (!stringNames.contains(candidateName)) {
-            nonRepeatIndexes.add(y);
-            stringNames.add(candidateName);
-            // print(stringNames);
+        if (election['kind_of_ballot_item'] == 'OFFICE') {
+          print(x);
+          print(election['id']);
+          int candidateListLength = election['candidate_list'].length;
+          if (candidateListLength > 20) {
+            candidateListLength = 20;
           }
-        }
+          List<Candidate> electionCandidates = [];
 
-        for (var y = 0; y < nonRepeatIndexes.length; y++) {
-          var index = nonRepeatIndexes[y];
+          List<int> nonRepeatIndexes = [];
+          List<String> stringNames = [];
 
-          var candidate = election['candidate_list'][index];
+          for (var y = 0; y < candidateListLength; y++) {
+            var candidate = election['candidate_list'][y];
+            var candidateName = candidate['ballot_item_display_name'];
 
-          if (candidate['withdrawn_from_election'] == false) {
-            Candidate addCandidate = new Candidate(
-                candidate['ballot_item_display_name'],
-                candidate['ballotpedia_candidate_summary'],
-                candidate['party'],
-                candidate['candidate_photo_url_large'],
-                candidate['ballotpedia_candidate_url'],
-                candidate['candidate_url'],
-                candidate['facebook_url'],
-                candidate['twitter_url']);
-
-            electionCandidates.add(addCandidate);
-          }
-        }
-
-        electionCandidates = electionCandidates.toSet().toList();
-
-        Election addElection = new Election(
-            election['ballot_item_display_name'],
-            election['id'],
-            int.parse(election['google_civic_election_id'].toString()),
-            election['race_office_level'],
-            electionCandidates,
-            null);
-
-        print('checkpoint 1');
-
-        if (electionIndicies.containsKey(addElection.id)) {
-          print('found election with prexisting person');
-          print(electionIndicies[addElection.id]);
-          for (var x = 0; x < addElection.candidates.length; x++) {
-            if (addElection.candidates[x].name ==
-                electionIndicies[addElection.id]) {
-              addElection.chosenIndex = x;
-              break;
+            if (!stringNames.contains(candidateName)) {
+              nonRepeatIndexes.add(y);
+              stringNames.add(candidateName);
+              // print(stringNames);
             }
           }
+
+          for (var y = 0; y < nonRepeatIndexes.length; y++) {
+            var index = nonRepeatIndexes[y];
+
+            var candidate = election['candidate_list'][index];
+
+            if (candidate['withdrawn_from_election'] == false) {
+              Candidate addCandidate = new Candidate(
+                  candidate['ballot_item_display_name'],
+                  candidate['ballotpedia_candidate_summary'],
+                  candidate['party'],
+                  candidate['candidate_photo_url_large'],
+                  candidate['ballotpedia_candidate_url'],
+                  candidate['candidate_url'],
+                  candidate['facebook_url'],
+                  candidate['twitter_url']);
+
+              electionCandidates.add(addCandidate);
+            }
+          }
+
+          electionCandidates = electionCandidates.toSet().toList();
+
+          Election addElection = new Election(
+              election['ballot_item_display_name'],
+              election['id'],
+              int.parse(election['google_civic_election_id'].toString()),
+              election['race_office_level'],
+              electionCandidates,
+              null);
+
+          print('checkpoint 1');
+
+          if (electionIndicies.containsKey(addElection.id)) {
+            print('found election with prexisting person');
+            print(electionIndicies[addElection.id]);
+            for (var x = 0; x < addElection.candidates.length; x++) {
+              if (addElection.candidates[x].name ==
+                  electionIndicies[addElection.id]) {
+                addElection.chosenIndex = x;
+                break;
+              }
+            }
+          }
+
+          print('checkpoint 2');
+
+          electionsBox.add(addElection);
+          print('election added');
+          print(electionsBox.length);
+
+          //  returnElections.add(addElection);
         }
+        if (election['kind_of_ballot_item'] == 'MEASURE') {
+          Measure addMeasure = new Measure(
+              election['ballot_item_display_name'],
+              int.parse(election['id'].toString()),
+              election['google_civic_election_id'],
+              election['measure_text'],
+              election['no_vote_description'],
+              election['yes_vote_description'],
+              election['measure_url'],
+              null);
 
-        print('checkpoint 2');
+          if (measureIndicies.containsKey(addMeasure.id)) {
+            print(electionIndicies[addMeasure.id]);
+            addMeasure.isYes = measureIndicies[addMeasure.id];
+          }
 
-        electionsBox.add(addElection);
-        print('election added');
-        print(electionsBox.length);
-
-        //  returnElections.add(addElection);
+          measuresBox.add(addMeasure);
+        }
       }
 
       //TODO if this google_civic ID is not in current Ballots, then check delete all ballots and recreate.
@@ -246,7 +271,7 @@ class _HomePageState extends State<HomePage> {
     print(status);
     if (file == null || status == true) {
       //crudBallots(id);
-      crudElections(id);
+      crudElectionsAndMeasures(id);
     } else {
       setState(() {
         readyToRender = true;
@@ -255,7 +280,7 @@ class _HomePageState extends State<HomePage> {
 //do nothing
   }
 
-  crudElections(String id) async {
+  crudElectionsAndMeasures(String id) async {
     String response;
     try {
       String sendUrl =
@@ -269,9 +294,10 @@ class _HomePageState extends State<HomePage> {
     } finally {
       print(response);
       Map<int, String> currentElections = {};
+      Map<int, bool> currentMeasures = {};
       if (electionsBox.length == 0) {
         print('going zero');
-        organizeElections(response, currentElections);
+        organizeElections(response, currentElections, currentMeasures);
       } else {
         print('populating with Map');
         for (var x = 0; x < electionsBox.length; x++) {
@@ -281,13 +307,20 @@ class _HomePageState extends State<HomePage> {
                 election.candidates[election.chosenIndex].name;
           }
         }
+        for (var x = 0; x < measuresBox.length; x++) {
+          Measure measure = measuresBox.getAt(x);
+          if (measure.isYes != null) {
+            currentMeasures[measure.id] = measure.isYes;
+          }
+        }
         try {
           await electionsBox.clear();
+          await measuresBox.clear();
         } catch (error) {
           print(error);
         } finally {
           print(electionsBox.length);
-          organizeElections(response, currentElections);
+          organizeElections(response, currentElections, currentMeasures);
         }
       }
     }
@@ -367,6 +400,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     ballotsBox = Hive.box('ballotBox');
     electionsBox = Hive.box('electionBox');
+    measuresBox = Hive.box('measureBox');
     //function to see if one of ballots has passed;
     bool runAgain = checkIfBallotsPassed();
     setVoterId(runAgain);
