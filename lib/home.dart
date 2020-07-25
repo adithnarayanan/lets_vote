@@ -135,7 +135,7 @@ class _HomePageState extends State<HomePage> {
 
           Election addElection = new Election(
               election['ballot_item_display_name'],
-              election['id'],
+              int.parse(election['id'].toString()),
               int.parse(election['google_civic_election_id'].toString()),
               election['race_office_level'],
               electionCandidates,
@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
           Measure addMeasure = new Measure(
               election['ballot_item_display_name'],
               int.parse(election['id'].toString()),
-              election['google_civic_election_id'],
+              int.parse(election['google_civic_election_id'].toString()),
               election['measure_text'],
               election['no_vote_description'],
               election['yes_vote_description'],
