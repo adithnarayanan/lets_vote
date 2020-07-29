@@ -57,7 +57,7 @@ class _BallotPageState extends State<BallotPage> {
   List<int> local = [];
   bool electionsReady = false;
   String deviceId;
-  String ballotName;
+  String ballotName = 'n/a';
   Box<Election> electionsBox;
   Box<Ballot> ballotsBox;
   Box<Measure> measuresBox;
@@ -345,12 +345,17 @@ class _BallotPageState extends State<BallotPage> {
     // if (electionsBox.length == 0) {
     //   getPreferences();
     // } else {
-    for (var x = 0; x < ballotsBox.length; x++) {
-      print(ballotsBox.getAt(x).googleBallotId);
-      print(electionsBox.getAt(0).googleCivicId);
-      if (ballotsBox.getAt(x).googleBallotId ==
-          electionsBox.getAt(0).googleCivicId) {
-        ballotName = ballotsBox.getAt(x).name;
+    if (ballotsBox.length > 0) {
+      ballotName = ballotsBox.getAt(0).name;
+    }
+    if (electionsBox.length > 0) {
+      for (var x = 0; x < ballotsBox.length; x++) {
+        print(ballotsBox.getAt(x).googleBallotId);
+        print(electionsBox.getAt(0).googleCivicId);
+        if (ballotsBox.getAt(x).googleBallotId ==
+            electionsBox.getAt(0).googleCivicId) {
+          ballotName = ballotsBox.getAt(x).name;
+        }
       }
     }
     filterElections();

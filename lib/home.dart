@@ -293,36 +293,45 @@ class _HomePageState extends State<HomePage> {
     } catch (error) {
       print(error);
     } finally {
-      print(response);
-      Map<int, String> currentElections = {};
-      Map<int, bool> currentMeasures = {};
-      if (electionsBox.length == 0) {
-        print('going zero');
-        organizeElections(response, currentElections, currentMeasures);
-      } else {
-        print('populating with Map');
-        for (var x = 0; x < electionsBox.length; x++) {
-          Election election = electionsBox.getAt(x);
-          if (election.chosenIndex != null) {
-            currentElections[election.id] =
-                election.candidates[election.chosenIndex].name;
-          }
-        }
-        for (var x = 0; x < measuresBox.length; x++) {
-          Measure measure = measuresBox.getAt(x);
-          if (measure.isYes != null) {
-            currentMeasures[measure.id] = measure.isYes;
-          }
-        }
-        try {
-          await electionsBox.clear();
-          await measuresBox.clear();
-        } catch (error) {
-          print(error);
-        } finally {
-          print(electionsBox.length);
+      var jsonParsed = jsonDecode(response);
+
+      if (jsonParsed['success'] == true && jsonParsed['ballot_found'] == true) {
+        print(response);
+        Map<int, String> currentElections = {};
+        Map<int, bool> currentMeasures = {};
+        if (electionsBox.length == 0) {
+          print('going zero');
           organizeElections(response, currentElections, currentMeasures);
+        } else {
+          print('populating with Map');
+          for (var x = 0; x < electionsBox.length; x++) {
+            Election election = electionsBox.getAt(x);
+            if (election.chosenIndex != null) {
+              currentElections[election.id] =
+                  election.candidates[election.chosenIndex].name;
+            }
+          }
+          for (var x = 0; x < measuresBox.length; x++) {
+            Measure measure = measuresBox.getAt(x);
+            if (measure.isYes != null) {
+              currentMeasures[measure.id] = measure.isYes;
+            }
+          }
+          try {
+            await electionsBox.clear();
+            await measuresBox.clear();
+          } catch (error) {
+            print(error);
+          } finally {
+            print(electionsBox.length);
+            organizeElections(response, currentElections, currentMeasures);
+          }
         }
+      } else {
+        setState(() {
+          readyToRender = true;
+        });
+        //readyToRender = true
       }
     }
   }
