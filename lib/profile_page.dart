@@ -72,93 +72,96 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
-            child: Text(
-              'Your Profile',
-              style: topStyle,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 80),
-            child: SizedBox(
-              height: 20.0,
-              width: 150.0,
-              child: Divider(
-                thickness: 3,
-                color: Colors.teal.shade100,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
+              child: Text(
+                'Your Profile',
+                style: topStyle,
+                textAlign: TextAlign.center,
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6.0),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: ListTile(
-                  leading: Icon(Icons.group),
-                  title: Text(
-                    'Party: $party',
-                    style: TextStyle(fontSize: 18.0),
-                  ),
-                  //trailing: Icon(Icons.arrow_forward_ios),
-                  trailing: FlatButton(
-                    child: Text('Edit',
-                        style: TextStyle(fontSize: 15, color: Colors.blue)),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PartyInitializationPage()),
-                      );
-                    },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 80),
+              child: SizedBox(
+                height: 20.0,
+                width: 150.0,
+                child: Divider(
+                  thickness: 3,
+                  color: Colors.teal.shade100,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6.0),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: ListTile(
+                    leading: Icon(Icons.group),
+                    title: Text(
+                      'Party: $party',
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                    //trailing: Icon(Icons.arrow_forward_ios),
+                    trailing: FlatButton(
+                      child: Text('Edit',
+                          style: TextStyle(fontSize: 15, color: Colors.blue)),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PartyInitializationPage()),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6.0),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: ListTile(
-                  leading: Icon(Icons.location_on),
-                  title: Text(
-                    'Address: $address',
-                    style: TextStyle(fontSize: 18.0),
-                  ),
-                  //trailing: Icon(Icons.arrow_forward_ios),
-                  trailing: FlatButton(
-                    child: Text('Edit',
-                        style: TextStyle(fontSize: 15, color: Colors.blue)),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddressIntitializationPage()),
-                      );
-                    },
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6.0),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  child: ListTile(
+                    leading: Icon(Icons.location_on),
+                    title: Text(
+                      'Address: $address',
+                      style: TextStyle(fontSize: 18.0),
+                    ),
+                    //trailing: Icon(Icons.arrow_forward_ios),
+                    trailing: FlatButton(
+                      child: Text('Edit',
+                          style: TextStyle(fontSize: 15, color: Colors.blue)),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  AddressIntitializationPage()),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          // Padding(
-          //   padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
-          //   child: Card(
-          //     child: ListTile(
-          //       leading: Icon(Icons.bookmark),
-          //       title: Text('Favorite Candidates'),
-          //       trailing: Icon(Icons.arrow_forward_ios),
-          //     ),
-          //   ),
-          // ),
-        ],
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
+            //   child: Card(
+            //     child: ListTile(
+            //       leading: Icon(Icons.bookmark),
+            //       title: Text('Favorite Candidates'),
+            //       trailing: Icon(Icons.arrow_forward_ios),
+            //     ),
+            //   ),
+            // ),
+          ],
+        ),
       ),
     );
   }

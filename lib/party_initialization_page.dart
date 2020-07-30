@@ -133,7 +133,7 @@ class _PartyInitializationPageState extends State<PartyInitializationPage>
             Padding(
               padding: const EdgeInsets.fromLTRB(30, 0, 15, 20),
               child: Text(
-                'In order to give you the best tailored experience, we ask for your party affiliation. Let\'s Vote will never store this information',
+                'In order to give you the best tailored experience, we ask for your party affiliation.',
                 style: messageText,
               ),
             ),

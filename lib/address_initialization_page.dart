@@ -268,7 +268,7 @@ class _AddressIntitializationPageState extends State<AddressIntitializationPage>
             Padding(
               padding: const EdgeInsets.fromLTRB(30, 0, 15, 20),
               child: Text(
-                'In order to give you the most accurate voter information, we require your address of residence. Let\'s Vote will never store this information',
+                'In order to give you the most accurate voter information, we require your address of residence.',
                 style: messageText,
               ),
             ),

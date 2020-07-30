@@ -514,74 +514,78 @@ class _VotingPageState extends State<VotingPage> {
     return Scaffold(
       floatingActionButton: _fab(inPerson),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
-              child: Text(
-                'Voting Checklist',
-                style: topStyle,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 80),
-              child: SizedBox(
-                height: 20.0,
-                width: 150.0,
-                child: Divider(
-                  thickness: 3,
-                  color: Colors.teal.shade100,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
+                child: Text(
+                  'Voting Checklist',
+                  style: topStyle,
+                  textAlign: TextAlign.center,
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 80),
+                child: SizedBox(
+                  height: 20.0,
+                  width: 150.0,
+                  child: Divider(
+                    thickness: 3,
+                    color: Colors.teal.shade100,
+                  ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5.0),
-                  child: ListTile(
-                    leading: Icon(Icons.check_circle, color: Colors.white),
-                    title: Text(
-                      'Registered to Vote',
-                      style: cardStyle,
-                    ),
-                    subtitle: InkWell(
-                      onTap: () {
-                        setState(() {
-                          status = 2;
-                        });
-                      },
-                      child: Row(
-                        children: [
-                          Text(
-                            'Update/Check Status',
-                            style: TextStyle(
-                                color: Colors.blue.shade900, fontSize: 16),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.blue.shade900,
-                            size: 18.0,
-                          ),
-                        ],
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5.0),
+                    child: ListTile(
+                      leading: Icon(Icons.check_circle, color: Colors.white),
+                      title: Text(
+                        'Registered to Vote',
+                        style: cardStyle,
+                      ),
+                      subtitle: InkWell(
+                        onTap: () {
+                          setState(() {
+                            status = 2;
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            Text(
+                              'Update/Check Status',
+                              style: TextStyle(
+                                  color: Colors.blue.shade900, fontSize: 16),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.blue.shade900,
+                              size: 18.0,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
+                  color: Colors.green,
                 ),
-                color: Colors.green,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-              child: _ballotCompleteCard(_ballotComplete()),
-            ),
-            _completionCards(),
-          ],
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                child: _ballotCompleteCard(_ballotComplete()),
+              ),
+              _completionCards(),
+            ],
+          ),
         ),
       ),
     );
