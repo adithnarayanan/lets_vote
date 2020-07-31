@@ -85,7 +85,7 @@ class _MyAppState extends State<MyApp> {
                   // ),
                   children: [
                     Expanded(
-                      child: Image.asset('assets/LetsVoteBeta.png'),
+                      child: Image.asset('assets/LetsVoteText.png'),
                     )
                   ]),
             ),

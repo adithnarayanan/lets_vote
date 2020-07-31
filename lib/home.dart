@@ -471,7 +471,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 //crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Image.asset('assets/LetsVoteBeta.png'),
+                  Image.asset('assets/LetsVoteText.png'),
                   // Text(
                   //   'Let\'s Vote is Preparing Your Ballot',
                   //   style: TextStyle(
