@@ -35,7 +35,7 @@
 	<key>io.flutter.embedded_views_preview</key>
 	<string>YES</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open.</string>
+	<string>This app needs to access your location to get your current address in order to give you accurate voting data</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
