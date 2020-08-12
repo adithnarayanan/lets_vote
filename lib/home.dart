@@ -59,6 +59,7 @@ class _HomePageState extends State<HomePage> {
   String stateCode;
   String id;
   String responseFromStateDeadlines;
+  DateTime lastRefreshed;
   bool readyToRender = false;
 
   void _onItemTapped(int index) {
@@ -226,6 +227,22 @@ class _HomePageState extends State<HomePage> {
     return id;
   }
 
+  Future<DateTime> getRefreshDate() async {
+    String keyName = 'refreshDate';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String dateTimeString = prefs.getString(keyName);
+    if (dateTimeString != null) {
+      return DateTime.parse(dateTimeString);
+    }
+    return null;
+  }
+
+  void setRefreshDate() async {
+    String keyName = 'refreshDate';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(keyName, DateTime.now().toIso8601String());
+  }
+
   Future<String> getStateCode() async {
     String keyName = 'stateCode';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -244,16 +261,19 @@ class _HomePageState extends State<HomePage> {
     String voterId;
     String temp_code;
     String temp_response;
+    DateTime temp_date;
     try {
       voterId = await getDeviceId();
       temp_code = await getStateCode();
       temp_response = await _loadFromAsset();
+      temp_date = await getRefreshDate();
     } catch (error) {
       print(error);
     } finally {
       print('OI MATE IM WORKING LMAO');
       stateCode = temp_code;
       responseFromStateDeadlines = temp_response;
+      lastRefreshed = temp_date;
       id = voterId;
       if (ballotsBox.length == 0) {
         sendBallotRequest(voterId, false);
@@ -266,11 +286,17 @@ class _HomePageState extends State<HomePage> {
     String sendUrl =
         'https://api.wevoteusa.org/apis/v1/voterBallotItemsRetrieve/?&voter_device_id=' +
             id;
-    var file = await BallotCacheManager().getFileFromCache(sendUrl);
+    var file = await BallotCacheManager()
+        .getFileFromCache(sendUrl, ignoreMemCache: true);
     //var file = await DefaultCacheManager().getFileFromCache(sendUrl);
     print(file);
     print(status);
-    if (file == null || status == true) {
+    bool mustRefresh = false;
+    if (lastRefreshed == null ||
+        lastRefreshed.difference(DateTime.now()).inHours.abs() > 72) {
+      mustRefresh = true;
+    }
+    if (file == null || status == true || mustRefresh == true) {
       //crudBallots(id);
       crudElectionsAndMeasures(id);
     } else {
@@ -296,6 +322,7 @@ class _HomePageState extends State<HomePage> {
       var jsonParsed = jsonDecode(response);
 
       if (jsonParsed['success'] == true && jsonParsed['ballot_found'] == true) {
+        setRefreshDate();
         print(response);
         Map<int, String> currentElections = {};
         Map<int, bool> currentMeasures = {};
@@ -340,6 +367,7 @@ class _HomePageState extends State<HomePage> {
     bool status = false;
     for (var x = ballotsBox.length - 1; x > -1; x--) {
       if (ballotsBox.getAt(x).date.isBefore(DateTime.now())) {
+        print('checking');
         ballotsBox.deleteAt(x);
         status = true;
       }

@@ -3,7 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
 class BallotCacheManager extends BaseCacheManager {
-  static const key = 'customCache';
+  static const key = 'ballotCache';
 
   static BallotCacheManager _instance;
 
@@ -16,14 +16,6 @@ class BallotCacheManager extends BaseCacheManager {
 
   BallotCacheManager._() : super(key, maxAgeCacheObject: Duration(days: 3));
 
-  // @override
-  // Future<void> emptyCache() {
-  //   // TODO: implement emptyCache
-  //   BallotCacheManager._().emptyCache();
-  //   return super.emptyCache();
-  // }
-
-  @override
   Future<String> getFilePath() async {
     var directory = await getTemporaryDirectory();
     return path.join(directory.path, key);
