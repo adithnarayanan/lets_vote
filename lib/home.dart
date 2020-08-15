@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:lets_vote/ballot_page.dart';
 import 'package:lets_vote/measure.dart';
+import 'package:lets_vote/notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:lets_vote/dashboard_page.dart';
 import 'ballot.dart';
@@ -61,6 +62,7 @@ class _HomePageState extends State<HomePage> {
   String responseFromStateDeadlines;
   DateTime lastRefreshed;
   bool readyToRender = false;
+  bool notificationsEnabled;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -192,6 +194,8 @@ class _HomePageState extends State<HomePage> {
         sendBallotRequest(id, true);
       } else {
         setState(() {
+          cancelAllNotifications();
+          createBallotNotifications();
           readyToRender = true;
         });
       }
@@ -253,6 +257,11 @@ class _HomePageState extends State<HomePage> {
     return code;
   }
 
+  Future<bool> getNotificationsEnabled() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('notificationsEnabled') ?? true;
+  }
+
   Future<String> _loadFromAsset() async {
     return await rootBundle.loadString("assets/state_deadlines.json");
   }
@@ -262,11 +271,13 @@ class _HomePageState extends State<HomePage> {
     String temp_code;
     String temp_response;
     DateTime temp_date;
+    bool notification;
     try {
       voterId = await getDeviceId();
       temp_code = await getStateCode();
       temp_response = await _loadFromAsset();
       temp_date = await getRefreshDate();
+      notification = await getNotificationsEnabled();
     } catch (error) {
       print(error);
     } finally {
@@ -275,6 +286,7 @@ class _HomePageState extends State<HomePage> {
       responseFromStateDeadlines = temp_response;
       lastRefreshed = temp_date;
       id = voterId;
+      notificationsEnabled = notification;
       if (ballotsBox.length == 0) {
         sendBallotRequest(voterId, false);
       }
@@ -301,6 +313,8 @@ class _HomePageState extends State<HomePage> {
       crudElectionsAndMeasures(id);
     } else {
       setState(() {
+        cancelAllNotifications();
+        createBallotNotifications();
         readyToRender = true;
       });
     }
@@ -356,6 +370,8 @@ class _HomePageState extends State<HomePage> {
         }
       } else {
         setState(() {
+          cancelAllNotifications();
+          createBallotNotifications();
           readyToRender = true;
         });
         //readyToRender = true
@@ -426,6 +442,8 @@ class _HomePageState extends State<HomePage> {
       } else {
         if (status) {
           setState(() {
+            cancelAllNotifications();
+            createBallotNotifications();
             readyToRender = true;
           });
         }
