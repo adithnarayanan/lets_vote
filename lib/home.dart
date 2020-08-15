@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive/hive.dart';
 import 'package:lets_vote/ballot_page.dart';
 import 'package:lets_vote/measure.dart';
@@ -195,7 +198,7 @@ class _HomePageState extends State<HomePage> {
       } else {
         setState(() {
           cancelAllNotifications();
-          createBallotNotifications();
+          createBallotNotifications(notificationsEnabled);
           readyToRender = true;
         });
       }
@@ -262,6 +265,25 @@ class _HomePageState extends State<HomePage> {
     return prefs.getBool('notificationsEnabled') ?? true;
   }
 
+  void setNotificationsEnabled(bool value) async {
+    notificationsEnabled = value;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('notificationsEnabled', value);
+    if (Platform.isIOS) {
+      if (value) {
+        cancelAllNotifications();
+        createBallotNotifications(true);
+      } else if (!value) {
+        cancelAllNotifications();
+      }
+    }
+  }
+
+  void setIOSNotificationsEnabled(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('iOSNotificationsEnabled', value);
+  }
+
   Future<String> _loadFromAsset() async {
     return await rootBundle.loadString("assets/state_deadlines.json");
   }
@@ -314,7 +336,7 @@ class _HomePageState extends State<HomePage> {
     } else {
       setState(() {
         cancelAllNotifications();
-        createBallotNotifications();
+        createBallotNotifications(notificationsEnabled);
         readyToRender = true;
       });
     }
@@ -371,7 +393,7 @@ class _HomePageState extends State<HomePage> {
       } else {
         setState(() {
           cancelAllNotifications();
-          createBallotNotifications();
+          createBallotNotifications(notificationsEnabled);
           readyToRender = true;
         });
         //readyToRender = true
@@ -443,7 +465,7 @@ class _HomePageState extends State<HomePage> {
         if (status) {
           setState(() {
             cancelAllNotifications();
-            createBallotNotifications();
+            createBallotNotifications(notificationsEnabled);
             readyToRender = true;
           });
         }
@@ -452,9 +474,39 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<bool> sendIOSNotificationsPermission() async {
+    if (Platform.isIOS) {
+      var result = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+      return result;
+    }
+
+    return null;
+  }
+
+  void setIOSandNotificationsEnabled() async {
+    bool notifPermission = await sendIOSNotificationsPermission();
+    if (notifPermission == null) {
+      //setNotificationsEnabled(true);
+    } else if (notifPermission) {
+      setNotificationsEnabled(true);
+      setIOSNotificationsEnabled(true);
+    } else {
+      setNotificationsEnabled(false);
+      setIOSNotificationsEnabled(false);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
+    setIOSandNotificationsEnabled();
     ballotsBox = Hive.box('ballotBox');
     electionsBox = Hive.box('electionBox');
     measuresBox = Hive.box('measureBox');

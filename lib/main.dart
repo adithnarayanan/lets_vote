@@ -116,6 +116,9 @@ class _MyAppState extends State<MyApp> {
     initializationSettingsAndroid =
         new AndroidInitializationSettings('@mipmap/ic_launcher');
     initializationSettingsIOS = new IOSInitializationSettings(
+        requestSoundPermission: false,
+        requestBadgePermission: false,
+        requestAlertPermission: false,
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
     initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);

@@ -37,28 +37,30 @@ void cancelAllNotifications() async {
   await flutterLocalNotificationsPlugin.cancelAll();
 }
 
-void createBallotNotifications() async {
-  Box ballotBox = Hive.box<Ballot>('ballotBox');
-  for (var x = 0; x < ballotBox.length; x++) {
-    Ballot ballot = ballotBox.getAt(x);
-    if (DateTime.now().isBefore(ballotBox.getAt(x).date)) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      int firstAlert = prefs.getInt('firstAlert') ?? 7;
-      int secondAlert = prefs.getInt('secondAlert') ?? 7;
+void createBallotNotifications(bool status) async {
+  if (status) {
+    Box ballotBox = Hive.box<Ballot>('ballotBox');
+    for (var x = 0; x < ballotBox.length; x++) {
+      Ballot ballot = ballotBox.getAt(x);
+      if (DateTime.now().isBefore(ballotBox.getAt(x).date)) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        int firstAlert = prefs.getInt('firstAlert') ?? 7;
+        int secondAlert = prefs.getInt('secondAlert') ?? 7;
 
-      showScheduledNotification(
-          'Reminder',
-          'Registration Deadline for ${ballot.name} is just $firstAlert Days Away',
-          //ballot.deadline.subtract(new Duration(days: firstAlert)),
-          DateTime.now().add(Duration(seconds: firstAlert)),
-          x);
+        showScheduledNotification(
+            'Reminder',
+            'Registration Deadline for ${ballot.name} is just $firstAlert Days Away',
+            //ballot.deadline.subtract(new Duration(days: firstAlert)),
+            DateTime.now().add(Duration(seconds: firstAlert)),
+            x);
 
-      showScheduledNotification(
-          'Reminder',
-          '${ballot.name} is just $secondAlert Days Away!',
-          //ballot.date.subtract(new Duration(days: firstAlert)),
-          DateTime.now().add(Duration(seconds: secondAlert + 20)),
-          x + ballotBox.length);
+        showScheduledNotification(
+            'Reminder',
+            '${ballot.name} is just $secondAlert Days Away!',
+            //ballot.date.subtract(new Duration(days: firstAlert)),
+            DateTime.now().add(Duration(seconds: secondAlert + 20)),
+            x + ballotBox.length);
+      }
     }
   }
 }

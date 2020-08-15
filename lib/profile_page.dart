@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:lets_vote/notifications.dart';
@@ -5,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'address_initialization_page.dart';
 import 'party_initialization_page.dart';
+import 'package:app_settings/app_settings.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -15,6 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String party;
   String address;
   bool isSwitched = false;
+  bool iOSNotificationPermission = true;
   int firstAlert = 7;
   int secondAlert = 7;
 
@@ -57,6 +61,21 @@ class _ProfilePageState extends State<ProfilePage> {
     return secondAlert;
   }
 
+  Future<bool> getNotificationsEnabled() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('notificationsEnabled');
+  }
+
+  Future<bool> getIOSNotificationsEnabled() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('iOSNotificationsEnabled');
+  }
+
+  void setNotificationsEnabled(bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('notificationsEnabled', value);
+  }
+
   setFirstAlert(int value) async {
     String keyName = 'firstAlert';
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -78,12 +97,14 @@ class _ProfilePageState extends State<ProfilePage> {
       temp_party = await getParty();
       temp_address = await getAddress();
       temp_id = await getDeviceId();
+      temp_switch = await getNotificationsEnabled();
     } catch (error) {
       print(error);
     } finally {
       setState(() {
         party = temp_party;
         address = temp_address;
+        isSwitched = temp_switch;
       });
     }
   }
@@ -93,12 +114,19 @@ class _ProfilePageState extends State<ProfilePage> {
     secondAlert = await getSecondAlert();
   }
 
+  void setIOSPermission() async {
+    iOSNotificationPermission = await getIOSNotificationsEnabled();
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getPreferences();
     initAlerts();
+    if (Platform.isIOS) {
+      setIOSPermission();
+    }
   }
 
   Future _showDialog1() async {
@@ -117,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() => firstAlert = value);
         await setFirstAlert(value);
         cancelAllNotifications();
-        createBallotNotifications();
+        createBallotNotifications(true);
       }
     });
   }
@@ -138,7 +166,7 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() => secondAlert = value);
         await setSecondAlert(value);
         cancelAllNotifications();
-        createBallotNotifications();
+        createBallotNotifications(true);
       }
     });
   }
@@ -255,13 +283,47 @@ class _ProfilePageState extends State<ProfilePage> {
                     onChanged: (value) {
                       if (!value) {
                         cancelAllNotifications();
+                        setNotificationsEnabled(false);
+                        setState(() {
+                          isSwitched = value;
+                          print(isSwitched);
+                        });
                       } else {
-                        createBallotNotifications();
+                        if (iOSNotificationPermission) {
+                          createBallotNotifications(true);
+                          setState(() {
+                            isSwitched = value;
+                            setNotificationsEnabled(true);
+                            print(isSwitched);
+                          });
+                        } else {
+                          print('nothing created');
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: Text('Notifications Not Enabled'),
+                              content: Text('Would you like to open settings'),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text("Yes"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+
+                                    AppSettings.openAppSettings();
+                                  },
+                                ),
+                                FlatButton(
+                                  child: Text("No"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            ),
+                            barrierDismissible: true,
+                          );
+                        }
                       }
-                      setState(() {
-                        isSwitched = value;
-                        print(isSwitched);
-                      });
                     },
                     activeTrackColor: Colors.lightGreenAccent,
                     activeColor: Colors.green,
