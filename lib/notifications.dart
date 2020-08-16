@@ -50,15 +50,15 @@ void createBallotNotifications(bool status) async {
         showScheduledNotification(
             'Reminder',
             'Registration Deadline for ${ballot.name} is just $firstAlert Days Away',
-            //ballot.deadline.subtract(new Duration(days: firstAlert)),
-            DateTime.now().add(Duration(seconds: firstAlert)),
+            ballot.deadline.subtract(new Duration(days: firstAlert)),
+            //DateTime.now().add(Duration(seconds: firstAlert)),
             x);
 
         showScheduledNotification(
             'Reminder',
             '${ballot.name} is just $secondAlert Days Away!',
-            //ballot.date.subtract(new Duration(days: firstAlert)),
-            DateTime.now().add(Duration(seconds: secondAlert + 20)),
+            ballot.date.subtract(new Duration(days: firstAlert)),
+            //DateTime.now().add(Duration(seconds: secondAlert + 20)),
             x + ballotBox.length);
       }
     }

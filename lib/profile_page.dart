@@ -63,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<bool> getNotificationsEnabled() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('notificationsEnabled');
+    return prefs.getBool('notificationsEnabled') ?? true;
   }
 
   Future<bool> getIOSNotificationsEnabled() async {
@@ -298,22 +298,31 @@ class _ProfilePageState extends State<ProfilePage> {
                           });
                         } else {
                           print('nothing created');
-                          showDialog(
+                          showCupertinoDialog(
                             context: context,
-                            builder: (_) => AlertDialog(
-                              title: Text('Notifications Not Enabled'),
-                              content: Text('Would you like to open settings'),
+                            builder: (_) => CupertinoAlertDialog(
+                              title: Text(
+                                  'Notifications Not Enabled for \"Let\'s Vote\"'),
+                              content: Text(
+                                  'Would you like to open app settings to enable notifications\n(Please restart app to stage changes)'),
                               actions: <Widget>[
                                 FlatButton(
-                                  child: Text("Yes"),
+                                  child: Text(
+                                    "Yes",
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                   onPressed: () {
                                     Navigator.of(context).pop();
-
                                     AppSettings.openAppSettings();
                                   },
                                 ),
                                 FlatButton(
-                                  child: Text("No"),
+                                  child: Text(
+                                    "No",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },

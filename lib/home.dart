@@ -270,10 +270,7 @@ class _HomePageState extends State<HomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('notificationsEnabled', value);
     if (Platform.isIOS) {
-      if (value) {
-        cancelAllNotifications();
-        createBallotNotifications(true);
-      } else if (!value) {
+      if (!value) {
         cancelAllNotifications();
       }
     }
@@ -335,8 +332,8 @@ class _HomePageState extends State<HomePage> {
       crudElectionsAndMeasures(id);
     } else {
       setState(() {
-        cancelAllNotifications();
-        createBallotNotifications(notificationsEnabled);
+        //cancelAllNotifications();
+        //createBallotNotifications(notificationsEnabled);
         readyToRender = true;
       });
     }
@@ -495,7 +492,7 @@ class _HomePageState extends State<HomePage> {
     if (notifPermission == null) {
       //setNotificationsEnabled(true);
     } else if (notifPermission) {
-      setNotificationsEnabled(true);
+      //setNotificationsEnabled(true);
       setIOSNotificationsEnabled(true);
     } else {
       setNotificationsEnabled(false);
