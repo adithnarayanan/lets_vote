@@ -46,20 +46,41 @@ void createBallotNotifications(bool status) async {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         int firstAlert = prefs.getInt('firstAlert') ?? 7;
         int secondAlert = prefs.getInt('secondAlert') ?? 7;
+        if (DateTime.now().isBefore(
+            ballot.deadline.subtract(new Duration(days: firstAlert)))) {
+          showScheduledNotification(
+              'Reminder',
+              'Registration Deadline for ${ballot.name} is just $firstAlert Days Away!',
+              ballot.deadline.subtract(new Duration(days: firstAlert)),
+              //DateTime.now().subtract(Duration(seconds: firstAlert + 25)),
+              x);
+        }
+
+        if (DateTime.now().isBefore(ballot.deadline)) {
+          showScheduledNotification(
+              'Reminder',
+              'Registration Deadline for ${ballot.name} is today!',
+              ballot.deadline,
+              //DateTime.now().add(Duration(seconds: firstAlert)),
+              x + ballotBox.length * 2);
+        }
+
+        if (DateTime.now()
+            .isBefore(ballot.date.subtract(new Duration(days: secondAlert)))) {
+          showScheduledNotification(
+              'Reminder',
+              '${ballot.name} is just $secondAlert Days Away!',
+              ballot.date.subtract(new Duration(days: secondAlert)),
+              //DateTime.now().add(Duration(seconds: secondAlert + 20)),
+              x + ballotBox.length);
+        }
 
         showScheduledNotification(
             'Reminder',
-            'Registration Deadline for ${ballot.name} is just $firstAlert Days Away',
-            ballot.deadline.subtract(new Duration(days: firstAlert)),
-            //DateTime.now().add(Duration(seconds: firstAlert)),
-            x);
-
-        showScheduledNotification(
-            'Reminder',
-            '${ballot.name} is just $secondAlert Days Away!',
-            ballot.date.subtract(new Duration(days: firstAlert)),
+            '${ballot.name} is today!',
+            ballot.date,
             //DateTime.now().add(Duration(seconds: secondAlert + 20)),
-            x + ballotBox.length);
+            x + ballotBox.length * 3);
       }
     }
   }
