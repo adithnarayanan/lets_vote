@@ -305,6 +305,7 @@ class _HomePageState extends State<HomePage> {
       responseFromStateDeadlines = temp_response;
       lastRefreshed = temp_date;
       id = voterId;
+      print(id);
       notificationsEnabled = notification;
       if (ballotsBox.length == 0) {
         sendBallotRequest(voterId, false);
@@ -422,22 +423,29 @@ class _HomePageState extends State<HomePage> {
   sendBallotRequest(String deviceId, bool status) async {
     var res;
     try {
+      print('lol');
+      print(deviceId.toString());
       String sendUrl =
           'https://api.wevoteusa.org/apis/v1/electionsRetrieve/voter_device_id=' +
               deviceId;
 
       //var file = await DefaultCacheManager().getSingleFile(sendUrl);
+      //print('lol');
       var file = await BallotCacheManager().getSingleFile(sendUrl);
+
+      print(file);
       res = await file.readAsString();
+      print('DeviceId: $deviceId');
+      print('res is $res');
     } catch (error) {
-      print(error);
+      print('Error is $error');
     } finally {
       populateBallots(res, status);
     }
   }
 
   populateBallots(String ballotResponse, status) {
-    //print(ballotResponse);
+    print(ballotResponse);
     var jsonParsed = jsonDecode(ballotResponse);
     int election_length = jsonParsed['election_list'].length;
     print(election_length);

@@ -156,7 +156,7 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (BuildContext context) {
           return new NumberPickerDialog.integer(
             minValue: 1,
-            maxValue: 60,
+            maxValue: 30,
             title: new Text("Select Number of Days Before"),
             initialIntegerValue: secondAlert,
             infiniteLoop: true,
@@ -364,7 +364,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         onPressed: !isSwitched ? null : _showDialog1,
                       ),
                       title: Text(
-                        'Days before Registration Deadline Notification',
+                        'Registration Deadline Notification',
                         style: TextStyle(
                             // color: Colors.white,
                             fontSize: 16.0,

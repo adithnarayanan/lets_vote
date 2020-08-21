@@ -7,6 +7,7 @@ import 'package:lets_vote/candidate.dart';
 import 'package:lets_vote/election.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lets_vote/home.dart';
+import 'package:lets_vote/introduction_page.dart';
 import 'package:lets_vote/measure.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'initialization_page.dart';
@@ -106,7 +107,8 @@ class _MyAppState extends State<MyApp> {
         selectedIndex: 2,
       );
     }
-    return InitializationPage();
+    //return InitializationPage();
+    return IntroductionPage();
   }
 
   @override

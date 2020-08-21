@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:lets_vote/help_page.dart';
+import 'package:lets_vote/profile_page.dart';
+
 import 'ballot_cache_manager.dart';
 
 import 'package:flutter/material.dart';
@@ -12,6 +15,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'ballot.dart';
 import 'home.dart';
+import 'introduction_page.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -196,9 +200,26 @@ class _DashboardPageState extends State<DashboardPage> {
 
     if (status) {
       return Scaffold(
+        floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.help_outline),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => Dialog(
+                    insetPadding: EdgeInsets.all(10.0),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15)),
+                      child: HelpPage(),
+                    )),
+                barrierDismissible: true,
+              );
+            }),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
+              //crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
